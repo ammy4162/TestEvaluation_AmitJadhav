@@ -6,28 +6,54 @@ namespace ClientTest_AmitJadhav
     //Vending Machine Program
     public class Program
     {
+        double amount = 0;
+        double currentAmount = 0;
         static void Main(string[] args)
         {
-            double amount = 0;
-            double currentAmount = 0;
-            int process = 1;
+
+            Program program = new Program();
+            program.VendingMachineMain(program);
+            Console.ReadLine();
+        }
+
+        public void VendingMachineMain(Program program)
+        {
             Dictionary<int, double> productPrice = new Dictionary<int, double>() {
                 {1, 1},
                 {2, 0.5},
                 {3, 0.65}
             };
 
-            Program program = new Program();
-
             int product = program.ProductSelection();
 
             if (product != 1 && product != 2 && product != 3)
             {
                 Console.WriteLine("Wrong input entered please try again...");
+                product = program.ProductSelection();
             }
 
             Console.WriteLine("Please Insert The Coins....");
-
+            int isInsufficentAmount = program.ProcessMechanism(program, product, productPrice);
+            
+            while (isInsufficentAmount != 0)
+            {
+                Console.WriteLine("isInsufficentAmount" + isInsufficentAmount);
+                if (amount < productPrice[product])
+                {
+                    Console.WriteLine("Amount" + amount);
+                    isInsufficentAmount = program.ProcessMechanism(program, product, productPrice);
+                }
+            }
+            if (isInsufficentAmount == 0)
+            {
+                Console.WriteLine("Thank You");
+            }
+            
+        }
+        public int ProcessMechanism(Program program, int product, Dictionary<int, double> productPrice)
+        {
+                                   
+            int process = 1;
             while (process != 0)
             {
                 amount = program.CoinMechanism(program, amount, currentAmount);
@@ -38,25 +64,41 @@ namespace ClientTest_AmitJadhav
 
             if (amount >= productPrice[product])
             {
-                Console.WriteLine("\n Here is your " + ((Products)product).ToString() + "\n\n Thank You");
+                Console.WriteLine("\n Here is your " + ((Products)product).ToString() + "\n\n");
             }
             else
             {
-                Console.WriteLine("\n Insuffient amount....");
+                Console.WriteLine("\n Insuffient amount....Do you want to continue 1.Yes 0.No(Exit The Transaction)");
+                int finalData = Convert.ToInt32(Console.ReadLine());
+                if(finalData == 1)
+                {
+                    return 1;
+                }
+                return 0;
             }
-
-            Console.ReadLine();
+            return 0;
         }
 
         // To select the product use the numbers
         public int ProductSelection()
         {
+            int result = 0; 
             Console.WriteLine("We have " +
                               " 1.Cola($1)" +
                               " 2.Chips($0.5)" +
                               " 3.Candy($0.65) " +
                               "What do you want please select");
-            return Convert.ToInt32(Console.ReadLine());
+            try
+            {
+                result = Convert.ToInt32(Console.ReadLine());
+            }
+            catch (Exception)
+            {
+                result = 0;
+                Console.WriteLine("Please enter integer value from list");
+            }
+
+            return result;
         }
 
         // To accept the coins multiple times
